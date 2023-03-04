@@ -1,8 +1,8 @@
 from flask import Flask, redirect, url_for, render_template, request
 
 app = Flask(__name__)
-emails = ["hoedje201@gmail.com"]
-passwords = ["@LucasBos10*"]
+emails = ["test@gmail.com"]
+passwords = ["test1234"]
 
 @app.errorhandler(404)
 def page_not_found(e):
