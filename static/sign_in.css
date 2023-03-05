@@ -1,0 +1,12 @@
+* {
+    margin: 0;
+}
+body {
+    justify-content: center;
+    display: flex;
+}
+input {
+    width: 250px;
+    height: 50px;
+    font-size: 22px;
+}

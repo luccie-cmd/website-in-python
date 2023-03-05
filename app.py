@@ -1,10 +1,20 @@
 from flask import Flask, redirect, url_for, render_template,  request
 
 app = Flask(__name__)
-with open("emails.txt") as email_file:
-    emails = email_file.read().split()
-with open("passwords.txt") as passwords_file:
-    passwords = passwords_file.read().split()
+try:    
+    with open("emails.txt") as email_file:
+        emails = email_file.read().split()
+except FileNotFoundError:
+    with open("emails.txt", "w") as email_file:
+        print("INFO: EMAIL FILE MADE")
+        emails = []
+try:
+    with open("passwords.txt") as passwords_file:
+        passwords = passwords_file.read().split()
+except FileNotFoundError:
+    with open("passwords.txt", "w") as passwords_file:
+        print("INFO: PASSWORD FILE CREATED")
+        passwords = []
 
 @app.errorhandler(404)
 def page_not_found(e):

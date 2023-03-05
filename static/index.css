@@ -1,0 +1,20 @@
+* {
+    margin: 0;
+}
+body {
+    justify-content: center;
+    display: flex;
+}
+.text {
+    font-size: 21px;
+}
+#sign_in,
+#sign_up {
+    font-size: 31px;
+    width: 200px;
+    height: 50px;
+    background-color: coral;
+    border-color: white;
+    color: white;
+    border-radius: 10%;
+}
