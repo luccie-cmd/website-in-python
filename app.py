@@ -30,7 +30,7 @@ def index():
         elif request.form.get('sign_up_add') == 'sign up':
             email = request.form.get('email')
             password = request.form.get('password')
-            if email not in emails and password not in passwords:
+            if email not in emails:
                 with open('passwords.txt', "r") as password_file:
                     original = password_file.read()
                 with open('passwords.txt', "w") as password_file:
@@ -64,4 +64,4 @@ def login():
     return render_template("login.html")
 
 if __name__ == '__main__':
-    app.run("Lucas Bos", 5500, True)
+    app.run(None, 5500, True)
