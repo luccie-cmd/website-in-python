@@ -1,28 +1,23 @@
 from flask import Flask, redirect, url_for, render_template,  request
 
-app = Flask(__name__)
-try:    
-    with open("emails.txt") as email_file:
-        emails = email_file.read().split()
-except FileNotFoundError:
-    with open("emails.txt", "w") as email_file:
-        print("INFO: EMAIL FILE MADE")
-        emails = []
-try:
-    with open("passwords.txt") as passwords_file:
-        passwords = passwords_file.read().split()
-except FileNotFoundError:
-    with open("passwords.txt", "w") as passwords_file:
-        print("INFO: PASSWORD FILE CREATED")
-        passwords = []
-
-@app.errorhandler(404)
-def page_not_found(e):
-    print(e)
-    return "<h1>" + str(e) + "</h1>"
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
+def setup():
+    app = Flask(__name__)
+    try:    
+        with open("emails.txt") as email_file:
+            emails = email_file.read().split()
+    except FileNotFoundError:
+        with open("emails.txt", "w") as email_file:
+            print("INFO: EMAIL FILE MADE")
+            emails = []
+    try:
+        with open("passwords.txt") as passwords_file:
+            passwords = passwords_file.read().split()
+    except FileNotFoundError:
+        with open("passwords.txt", "w") as passwords_file:
+            print("INFO: PASSWORD FILE CREATED")
+            passwords = [] 
+            
+def logic():
     if request.method == 'POST':
         if request.form.get('sign_in') == 'sign in':
             return redirect(url_for('sign_in'))
@@ -56,6 +51,15 @@ def index():
             return redirect(url_for('False_Button'))
     return render_template("index.html")
 
+@app.errorhandler(404)
+def page_not_found(e):
+    print(e)
+    return "<h1>" + str(e) + "</h1>"
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    logic()
+
 @app.route('/sign_in')
 def sign_in():
     print(emails, passwords)
@@ -74,4 +78,5 @@ def login():
     return render_template("login.html")
 
 if __name__ == '__main__':
+    setup()
     app.run(None, 5500, True)
