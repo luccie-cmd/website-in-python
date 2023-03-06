@@ -1,32 +1,41 @@
 from flask import Flask, redirect, url_for, render_template,  request
+app = Flask(__name__)
+emails = []
+passwords = []
 
 def setup():
-    app = Flask(__name__)
     try:    
         with open("emails.txt") as email_file:
             emails = email_file.read().split()
+            print(emails)
     except FileNotFoundError:
         with open("emails.txt", "w") as email_file:
             print("INFO: EMAIL FILE MADE")
-            emails = []
     try:
         with open("passwords.txt") as passwords_file:
             passwords = passwords_file.read().split()
+            print(passwords)
     except FileNotFoundError:
         with open("passwords.txt", "w") as passwords_file:
             print("INFO: PASSWORD FILE CREATED")
-            passwords = [] 
-            
-def logic():
+
+@app.errorhandler(404)
+def page_not_found(e):
+    print(e)
+    return "<h1>" + str(e) + "</h1>"
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
     if request.method == 'POST':
         if request.form.get('sign_in') == 'sign in':
             return redirect(url_for('sign_in'))
         elif request.form.get('sign_up_page') == 'sign up':
             return redirect(url_for('sign_up'))
         elif request.form.get('login') == 'login':
-            global email, password
+            print("login")
             email = request.form.get('email')
             password = request.form.get('password')
+            print(password, email, passwords, emails)
             for i in emails:
                 for j in passwords:
                     if email == i and password == j:
@@ -44,6 +53,8 @@ def logic():
                     original = email_file.read()
                 with open('emails.txt', "w") as email_file:
                     email_file.write(original + " " + email)
+                emails.append(email)
+                passwords.append(password)
                 return redirect(url_for('login'))
             else:
                 return redirect(url_for('sign_in'), 302)
@@ -51,18 +62,8 @@ def logic():
             return redirect(url_for('False_Button'))
     return render_template("index.html")
 
-@app.errorhandler(404)
-def page_not_found(e):
-    print(e)
-    return "<h1>" + str(e) + "</h1>"
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    logic()
-
 @app.route('/sign_in')
 def sign_in():
-    print(emails, passwords)
     return render_template("sign_in.html")
 
 @app.route('/sign_up')

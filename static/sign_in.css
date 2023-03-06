@@ -6,7 +6,13 @@ body {
     display: flex;
 }
 input {
-    width: 250px;
+    width: fit-content;
     height: 50px;
     font-size: 22px;
+    color: white;
+    background-color: wheat;
+    border-color: #fff;
+}
+#login {
+    width: 275px;
 }

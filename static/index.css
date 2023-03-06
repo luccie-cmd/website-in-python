@@ -16,5 +16,12 @@ body {
     background-color: coral;
     border-color: white;
     color: white;
-    border-radius: 10%;
+    border-radius: 25px;
+    box-shadow: 0;
+    border-bottom: 0;
+}
+#sign_in:hover,
+#sign_up:hover {
+    box-shadow: 5px;
+    cursor: pointer;
 }
