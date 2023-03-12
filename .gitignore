@@ -1,3 +1,4 @@
 *.txt
 *.bat
+*.pyc
 __pycache__
