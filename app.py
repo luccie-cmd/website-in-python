@@ -4,6 +4,7 @@ app = Flask(__name__)
 def setup():
     global emails
     global passwords
+    global usernames
     try:    
         with open("emails.txt") as email_file:
             emails = email_file.read().split()
@@ -16,6 +17,12 @@ def setup():
     except FileNotFoundError:
         with open("passwords.txt", "w") as passwords_file:
             print("INFO: PASSWORD FILE CREATED")
+    try:
+        with open("usernames.txt") as usernames_file:
+            usernames = usernames_file.read().split()
+    except FileNotFoundError:
+        with open("usernames.txt", "w") as usernames_file:
+            print("INFO: USERNAMES FILE CREATED")
             
 class Errors:
     @app.errorhandler(404)
@@ -47,8 +54,9 @@ class Routes:
             elif request.form.get('sign_up_add') == 'sign up':
                 email = request.form.get('email')
                 password = request.form.get('password')
-                last_email = email
-                if email not in emails:
+                username = request.form.get('username')
+                last_email = username
+                if email not in emails and username not in usernames:
                     with open('passwords.txt', "r") as password_file:
                         original = password_file.read()
                     with open('passwords.txt', "w") as password_file:
@@ -57,8 +65,13 @@ class Routes:
                         original = email_file.read()
                     with open('emails.txt', "w") as email_file:
                         email_file.write(original + " " + email)
+                    with open('usernames.txt', "r") as usernames_file:
+                        original = usernames_file.read()
+                    with open('usernames.txt', "w") as usernames_file:
+                        usernames_file.write(original + " " + email)
                     emails.append(email)
                     passwords.append(password)
+                    usernames.append(username)
                     return redirect(url_for('login'))
                 else:
                     return redirect(url_for('sign_in'), 302)
