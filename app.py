@@ -2,14 +2,14 @@ from flask import Flask, redirect, url_for, render_template,  request
 app = Flask(__name__)
 
 def setup():
-    global emails
+    global usernames
     global passwords
     try:    
-        with open("emails.txt") as email_file:
-            emails = email_file.read().split()
+        with open("usernames.txt") as username_file:
+            usernames = username_file.read().split()
     except FileNotFoundError:
-        with open("emails.txt", "w") as email_file:
-            print("INFO: EMAIL FILE MADE")
+        with open("usernames.txt", "w") as username_file:
+            print("INFO: username FILE MADE")
     try:
         with open("passwords.txt") as passwords_file:
             passwords = passwords_file.read().split()
@@ -36,28 +36,28 @@ class Routes:
             elif request.form.get('sign_up_page') == 'sign up':
                 return redirect(url_for('sign_up'))
             elif request.form.get('login') == 'login':
-                email = request.form.get('email')
+                username = request.form.get('username').lower()
                 password = request.form.get('password')
-                last_email = email
-                for i in emails:
+                last_email = username
+                for i in usernames:
                     for j in passwords:
-                        if email == i and password == j:
+                        if username == i and password == j:
                             return redirect(url_for('login'))
                 return redirect(url_for('sign_in'))
             elif request.form.get('sign_up_add') == 'sign up':
-                email = request.form.get('email')
+                username = request.form.get('username').lower()
                 password = request.form.get('password')
-                last_email = email
-                if email not in emails:
+                last_email = username
+                if username not in usernames:
                     with open('passwords.txt', "r") as password_file:
                         original = password_file.read()
                     with open('passwords.txt', "w") as password_file:
                         password_file.write(original + " " + password)
-                    with open('emails.txt', "r") as email_file:
-                        original = email_file.read()
-                    with open('emails.txt', "w") as email_file:
-                        email_file.write(original + " " + email)
-                    emails.append(email)
+                    with open('usernames.txt', "r") as username_file:
+                        original = username_file.read()
+                    with open('usernames.txt', "w") as username_file:
+                        username_file.write(original + " " + username)
+                    usernames.append(username)
                     passwords.append(password)
                     return redirect(url_for('login'))
                 else:
