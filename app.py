@@ -1,4 +1,5 @@
-from flask import Flask, redirect, url_for, render_template,  request
+from flask import Flask, redirect, url_for, render_template, request
+from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 
 def setup():
@@ -41,24 +42,25 @@ class Routes:
                 last_email = username
                 for i in usernames:
                     for j in passwords:
-                        if username == i and password == j:
+                        if username == i and check_password_hash(j, password):
                             return redirect(url_for('login'))
                 return redirect(url_for('sign_in'))
             elif request.form.get('sign_up_add') == 'sign up':
                 username = request.form.get('username').lower()
                 password = request.form.get('password')
+                hashed_password = generate_password_hash(password)
                 last_email = username
                 if username not in usernames:
                     with open('passwords.txt', "r") as password_file:
                         original = password_file.read()
                     with open('passwords.txt', "w") as password_file:
-                        password_file.write(original + " " + password)
+                        password_file.write(original + " " + hashed_password)
                     with open('usernames.txt', "r") as username_file:
                         original = username_file.read()
                     with open('usernames.txt', "w") as username_file:
                         username_file.write(original + " " + username)
                     usernames.append(username)
-                    passwords.append(password)
+                    passwords.append(hashed_password)
                     return redirect(url_for('login'))
                 else:
                     return redirect(url_for('sign_in'), 302)
