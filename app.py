@@ -1,5 +1,6 @@
-from flask import Flask, redirect, url_for, render_template, request
+from flask import Flask, redirect, url_for, render_template, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
+from json import dump, load
 app = Flask(__name__)
 
 def setup():
@@ -24,9 +25,17 @@ def setup():
             users.append(User(n, p))
             
 class User:
+    global data, original_data
+    
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        for u in users:
+            data.append({"name": u.get_name(), "password": u.get_pass()})
+        with open("users.json", "w") as f:
+            f.flush()
+            dump(data, f)
+        original_data = data
     def add_to_db(self):
         with open('passwords.txt', "r") as password_file:
             original = password_file.read()
@@ -36,8 +45,12 @@ class User:
                 original = username_file.read()
             with open('usernames.txt', "w") as username_file:
                 username_file.write(original + " " + self.username)
-            usernames.append(self.username)
-            passwords.append(self.password)
+        usernames.append(self.get_name())
+        passwords.append(self.get_pass())
+        original_data.append({"name": u.get_name(), "password": u.get_pass()})
+        with open("users.json", "w") as f:
+            f.flush()
+            dump(original_data, f)
     def get_pass(self):
         return self.password
     def get_name(self):
