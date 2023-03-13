@@ -5,6 +5,8 @@ app = Flask(__name__)
 def setup():
     global usernames
     global passwords
+    global users
+    users = []
     try:    
         with open("usernames.txt") as username_file:
             usernames = username_file.read().split()
@@ -17,6 +19,29 @@ def setup():
     except FileNotFoundError:
         with open("passwords.txt", "w") as passwords_file:
             print("INFO: PASSWORD FILE CREATED")
+    for n in usernames:
+        for p in passwords:
+            users.append(User(n, p))
+            
+class User:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+    def add_to_db(self):
+        with open('passwords.txt', "r") as password_file:
+            original = password_file.read()
+            with open('passwords.txt', "w") as password_file:
+                password_file.write(original + " " + self.password)
+            with open('usernames.txt', "r") as username_file:
+                original = username_file.read()
+            with open('usernames.txt', "w") as username_file:
+                username_file.write(original + " " + self.username)
+            usernames.append(self.username)
+            passwords.append(self.password)
+    def get_pass(self):
+        return self.password
+    def get_name(self):
+        return self.username
             
 class Errors:
     @app.errorhandler(404)
@@ -40,10 +65,9 @@ class Routes:
                 username = request.form.get('username').lower()
                 password = request.form.get('password')
                 last_email = username
-                for i in usernames:
-                    for j in passwords:
-                        if username == i and check_password_hash(j, password):
-                            return redirect(url_for('login'))
+                for u in users:
+                    if username == u.get_name() and check_password_hash(u.get_pass(), password):
+                        return redirect(url_for('login'))
                 return redirect(url_for('sign_in'))
             elif request.form.get('sign_up_add') == 'sign up':
                 username = request.form.get('username').lower()
@@ -51,16 +75,9 @@ class Routes:
                 hashed_password = generate_password_hash(password)
                 last_email = username
                 if username not in usernames:
-                    with open('passwords.txt', "r") as password_file:
-                        original = password_file.read()
-                    with open('passwords.txt', "w") as password_file:
-                        password_file.write(original + " " + hashed_password)
-                    with open('usernames.txt', "r") as username_file:
-                        original = username_file.read()
-                    with open('usernames.txt', "w") as username_file:
-                        username_file.write(original + " " + username)
-                    usernames.append(username)
-                    passwords.append(hashed_password)
+                    users.append(User(username, hashed_password))
+                    for u in users:
+                        u.add_to_db()
                     return redirect(url_for('login'))
                 else:
                     return redirect(url_for('sign_in'), 302)
