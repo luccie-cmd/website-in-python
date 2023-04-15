@@ -2,6 +2,8 @@ from flask import Flask, redirect, url_for, render_template, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from json import dump, load
 app = Flask(__name__)
+#replace this with your computers ip addres
+host_addr: str = "192.168.2.18"
 
 def setup():
     global usernames
@@ -118,4 +120,4 @@ class Routes:
 
 if __name__ == '__main__':
     setup()
-    app.run(None, 5500, True)
+    app.run(host_addr, 5500, True)
