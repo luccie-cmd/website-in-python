@@ -1,4 +1,5 @@
 *.txt
 *.bat
 *.pyc
+*.json
 __pycache__
